@@ -1,0 +1,11 @@
+pandas
+amadeus
+environ
+python-dotenv
+scikit-learn
+xgboost
+shap
+matplotlib
+plotly
+geopy
+category_encoders
