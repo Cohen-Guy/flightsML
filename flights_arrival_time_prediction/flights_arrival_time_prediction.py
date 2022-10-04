@@ -15,15 +15,19 @@ import shap
 import matplotlib.pyplot as plt
 from sklearn.model_selection import RandomizedSearchCV, GridSearchCV
 from category_encoders import TargetEncoder
+from sklearn.preprocessing import LabelEncoder
+from globalsContext import GlobalsContextClass
 
 class FlightsArrivalTimePrediction:
 
     def __init__(self):
-        self.time_str = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+        time_str = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+        self.globals_context = GlobalsContextClass(time_str)
         self.debug_flag = True
         dataset_csv_file_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data', 'flights_arrival_time_prediction', 'On_Time_Reporting_Carrier_On_Time_Performance_(1987_present)_2021_1.csv')
         self.dataset = pd.read_csv(dataset_csv_file_path)
         self.target_bucket_col_name = 'DelayBucket'
+        self.categorical_cols = [categorical_col['field_name'] for categorical_col in self.globals_context.cols_dict['categorical_cols']]
 
 
     def divide_target_to_buckets(self, dataset, target_col_name, target_bucket_col_name):
@@ -62,31 +66,30 @@ class FlightsArrivalTimePrediction:
         X['outlier'] = isolation_forest_model.fit_predict(X_without_excluded_columns)
         return X
 
-    def encoding(self, X, y, categorical_columns_names):
-        encoder = TargetEncoder()
-        X_categorical_columns = X.loc[:, categorical_columns_names]
-        for X_categorical_column in X_categorical_columns:
-            X[X_categorical_column] = encoder.fit_transform(X[X_categorical_column].astype(str), y.astype(str))
+    def encoding(self, X, y, categorical_columns):
+        label_encoder = LabelEncoder()
+        y = label_encoder.fit_transform(y)
+        target_encoder = TargetEncoder()
+        X[categorical_columns] = target_encoder.fit_transform(X[categorical_columns], y)
         return X
 
     def preprocessing(self, dataset):
         # predict_for_airline_code = 'AF'
         # dataset = self.filter_dataset_by_airline_code(dataset, predict_for_airline_code)
         # dataset = self.cleaning(dataset)
+        dataset = self.transform_types(dataset)
         X, y = self.dataset_extract_target(dataset)
         X = self.feature_selection(X)
-
-        categorical_columns_names = ['IATA_CODE_Reporting_Airline', 'OriginAirportID']
-        numerical_columns_names = []
-        ordinal_columns_names = []
-        binary_columns_names = []
-
         # X = self.feature_engineering(X)
-        X = self.encoding(X, y, categorical_columns_names)
+        X = self.encoding(X, y, self.categorical_cols)
         # excluded_column = 'departure_date'
         # X = self.outlier_detection(X, excluded_column)
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=42)
         return X_train, X_test, y_train, y_test
+
+    def transform_types(self, dataset):
+        dataset[self.categorical_cols] = dataset[self.categorical_cols].astype(str)
+        return dataset
 
     def train_linear_regression(self, X_train, y_train):
         model = LinearRegression()

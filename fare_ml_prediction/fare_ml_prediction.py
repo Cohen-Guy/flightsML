@@ -18,6 +18,7 @@ from sklearn.model_selection import RandomizedSearchCV, GridSearchCV
 class FareMLPrediction:
 
     def __init__(self):
+
         self.time_str = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
         self.debug_flag = True
         dataset_csv_file_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data', 'fare_ml_prediction', 'flight_offers.csv')
