@@ -180,6 +180,11 @@ class GlobalsContextClass:
                         'description': '',
                         'exclude_feature_from_training': False,
                     },
+                    {
+                        'field_name': 'ActualElapsedTime',
+                        'description': '',
+                        'exclude_feature_from_training': False,
+                    }
                 ],
             'datetime_cols':
                 [{
@@ -188,11 +193,7 @@ class GlobalsContextClass:
                     'exclude_feature_from_training': False,
                 }],
             'special_handling_cols':
-                [{
-                    'field_name': 'ActualElapsedTime',
-                    'description': '',
-                    'exclude_feature_from_training': False,
-                }],
+                [],
             'target_col':
                 {
                     'field_name': 'DelayBucket',
