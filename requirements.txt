@@ -9,3 +9,4 @@ matplotlib
 plotly
 geopy
 category_encoders
+xgboost

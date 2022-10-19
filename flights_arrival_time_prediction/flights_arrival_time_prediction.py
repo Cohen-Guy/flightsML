@@ -8,16 +8,20 @@ from sklearn.model_selection import train_test_split
 from sklearn import metrics
 from sklearn.metrics import mean_squared_error
 from sklearn.tree import DecisionTreeRegressor
-from sklearn.linear_model import LinearRegression
-from xgboost import XGBRegressor
-from sklearn.ensemble import RandomForestRegressor
+# from sklearn.linear_model import LinearRegression
+# from xgboost import XGBRegressor
+# from sklearn.ensemble import RandomForestRegressor
+from sklearn.linear_model import LogisticRegression
+from xgboost import XGBClassifier
 import shap
 import matplotlib.pyplot as plt
 from sklearn.model_selection import RandomizedSearchCV, GridSearchCV
 from category_encoders import TargetEncoder
 from sklearn.preprocessing import LabelEncoder
 from globalsContext import GlobalsContextClass
-
+from sklearn.metrics import accuracy_score
+from sklearn.preprocessing import StandardScaler
+import sklearn
 class FlightsArrivalTimePrediction:
 
     def __init__(self):
@@ -26,35 +30,28 @@ class FlightsArrivalTimePrediction:
         self.debug_flag = True
         dataset_csv_file_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data', 'flights_arrival_time_prediction', 'On_Time_Reporting_Carrier_On_Time_Performance_(1987_present)_2021_1.csv')
         self.dataset = pd.read_csv(dataset_csv_file_path)
+        self.target_col_name = 'ArrDelay'
         self.target_bucket_col_name = 'DelayBucket'
-        self.categorical_cols = [categorical_col['field_name'] for categorical_col in self.globals_context.cols_dict['categorical_cols']]
-
-
-    def divide_target_to_buckets(self, dataset, target_col_name, target_bucket_col_name):
-        dataset.loc[dataset[target_col_name].between(-10000, -60, 'both'), target_bucket_col_name] = '{-10000, -60}'
-        dataset.loc[dataset[target_col_name].between(-60, -45, 'right'), target_bucket_col_name] = '{-60, -45}'
-        dataset.loc[dataset[target_col_name].between(-45, -30, 'right'), target_bucket_col_name] = '{-45, -30}'
-        dataset.loc[dataset[target_col_name].between(-30, -15, 'right'), target_bucket_col_name] = '{-30, -15}'
-        dataset.loc[dataset[target_col_name].between(-15, -5, 'right'), target_bucket_col_name] = '{-15, -5}'
-        dataset.loc[dataset[target_col_name].between(-5, 0, 'right'), target_bucket_col_name] = '{-5, 0}'
-        dataset.loc[dataset[target_col_name].between(0, 5, 'left'), target_bucket_col_name] = '{0, 5}'
-        dataset.loc[dataset[target_col_name].between(5, 15, 'left'), target_bucket_col_name] = '{5, 15}'
-        dataset.loc[dataset[target_col_name].between(15, 30, 'left'), target_bucket_col_name] = '{15, 30}'
-        dataset.loc[dataset[target_col_name].between(30, 45, 'left'), target_bucket_col_name] = '{30, 45}'
-        dataset.loc[dataset[target_col_name].between(45, 60, 'left'), target_bucket_col_name] = '{45, 60}'
-        dataset.loc[dataset[target_col_name].between(60, 10000, 'both'), target_bucket_col_name] = '{60, 10000}'
-        return dataset
+        self.target_ordinal_bucket_col_name = 'DelayBucketOrdinal'
+        self.boolean_cols = [boolean_col['field_name'] for boolean_col in self.globals_context.cols_dict['boolean_cols'] if not boolean_col['exclude_feature_from_training']]
+        self.ordinal_cols = [ordinal_col['field_name'] for ordinal_col in self.globals_context.cols_dict['ordinal_cols'] if not ordinal_col['exclude_feature_from_training']]
+        self.categorical_cols = [categorical_col['field_name'] for categorical_col in self.globals_context.cols_dict['categorical_cols'] if not categorical_col['exclude_feature_from_training']]
+        self.numerical_cols = [numerical_col['field_name'] for numerical_col in self.globals_context.cols_dict['numerical_cols'] if not numerical_col['exclude_feature_from_training']]
+        self.datetime_cols = [datetime_col['field_name'] for datetime_col in self.globals_context.cols_dict['datetime_cols'] if not datetime_col['exclude_feature_from_training']]
+        self.selected_columns = self.boolean_cols + self.ordinal_cols + self.categorical_cols + self.numerical_cols + self.datetime_cols
 
     def dataset_extract_target(self, dataset):
-        target_col_name = 'ArrDelay'
-        dataset = self.divide_target_to_buckets(dataset, target_col_name, self.target_bucket_col_name)
-        y = dataset.pop(self.target_bucket_col_name)
+        dataset = self.globals_context.divide_target_to_buckets(dataset, self.target_col_name, self.target_bucket_col_name)
+        dataset = self.globals_context.transform_delay_bucket_to_ordinal(dataset)
+        dataset.pop(self.target_bucket_col_name)
+        y = dataset.pop(self.target_ordinal_bucket_col_name)
         return dataset, y
 
     def feature_selection(self, X):
         # self.selected_features = ['origin_location_code', 'destination_location_code', 'departure_date', 'validatingAirlineCodes', 'distance']  # 'validatingAirlineCodes',
-        self.excluded_features = ['FlightDate']
-        X = X.loc[:, ~X.columns.isin(self.excluded_features)]
+        # self.excluded_features = ['FlightDate']
+        # X = X.loc[:, ~X.columns.isin(self.excluded_features)]
+        X = X[self.selected_columns]
         return X
 
     def feature_engineering(self, X):
@@ -66,22 +63,31 @@ class FlightsArrivalTimePrediction:
         X['outlier'] = isolation_forest_model.fit_predict(X_without_excluded_columns)
         return X
 
-    def encoding(self, X, y, categorical_columns):
+    def encoding(self, X, y):
         label_encoder = LabelEncoder()
         y = label_encoder.fit_transform(y)
         target_encoder = TargetEncoder()
-        X[categorical_columns] = target_encoder.fit_transform(X[categorical_columns], y)
-        return X
+        X[self.categorical_cols] = target_encoder.fit_transform(X[self.categorical_cols], y)
+        return X, y
 
+    def scaling(self, X):
+        scaler = StandardScaler()
+        X[self.numerical_cols] = scaler.fit_transform(X[self.numerical_cols])
+        return X
+    def cleaning(self, dataset):
+        # dataset = dataset[dataset[self.target_col_name].notna()]
+        dataset.fillna(0, inplace=True)
+        return dataset
     def preprocessing(self, dataset):
         # predict_for_airline_code = 'AF'
         # dataset = self.filter_dataset_by_airline_code(dataset, predict_for_airline_code)
-        # dataset = self.cleaning(dataset)
+        dataset = self.cleaning(dataset)
         dataset = self.transform_types(dataset)
         X, y = self.dataset_extract_target(dataset)
         X = self.feature_selection(X)
         # X = self.feature_engineering(X)
-        X = self.encoding(X, y, self.categorical_cols)
+        # X = self.scaling(X)
+        X, y = self.encoding(X, y)
         # excluded_column = 'departure_date'
         # X = self.outlier_detection(X, excluded_column)
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=42)
@@ -91,13 +97,18 @@ class FlightsArrivalTimePrediction:
         dataset[self.categorical_cols] = dataset[self.categorical_cols].astype(str)
         return dataset
 
-    def train_linear_regression(self, X_train, y_train):
-        model = LinearRegression()
+    # def train_linear_regression(self, X_train, y_train):
+    #     model = LinearRegression()
+    #     model.fit(X_train, y_train)
+    #     return model
+
+    def train_xgboost_classifier(self, X_train, y_train):
+        model = XGBClassifier()
         model.fit(X_train, y_train)
         return model
 
-    def train_xgboost_regressor(self, X_train, y_train):
-        model = XGBRegressor(colsample_bytree=0.7, learning_rate=0.07, max_depth=7, min_child_weight=4, n_estimators=100)
+    def train_logistic_regression(self, X_train, y_train):
+        model = LogisticRegression()
         model.fit(X_train, y_train)
         return model
 
@@ -148,17 +159,17 @@ class FlightsArrivalTimePrediction:
         partial_dependence_diagram.savefig(partial_dependence_diagram_path, format='png', dpi=600, bbox_inches='tight')
         plt.clf()
 
-    def train_random_forest_regressor(self, X_train, y_train):
-        model = RandomForestRegressor()
-        model.fit(X_train, y_train)
-        return model
+    # def train_random_forest_regressor(self, X_train, y_train):
+    #     model = RandomForestRegressor()
+    #     model.fit(X_train, y_train)
+    #     return model
 
     def evaluate_train(self, model, X, y):
         y_pred = model.predict(X)
-        root_mean_square_error = mean_squared_error(y, y_pred, squared=False)
+        accuracy = accuracy_score(y, y_pred)
         X['y_true'] = y
         X['y_pred'] = y_pred
-        return X, root_mean_square_error
+        return X, accuracy
 
     def evaluate_test(self, model, X, y):
         y_pred = model.predict(X)
@@ -168,7 +179,7 @@ class FlightsArrivalTimePrediction:
 
     def ml_flow(self):
         X_train, X_test, y_train, y_test = self.preprocessing(self.dataset)
-        model = self.train_xgboost_regressor(X_train, y_train)
+        model = self.train_xgboost_classifier(X_train, y_train)
         X_train, train_root_mean_square_error = self.evaluate_train(model, X_train, y_train)
         print(f"train_root_mean_square_error: {train_root_mean_square_error}")
         X_test, test_root_mean_square_error = self.evaluate_test(model, X_test, y_test)
@@ -177,18 +188,20 @@ class FlightsArrivalTimePrediction:
 
     def hyperparameters_optimization(self):
         X_train, X_test, y_train, y_test = self.preprocessing(self.dataset)
-        parameters = {'objective': ['reg:squarederror'],
-                      'learning_rate': [.03, 0.05, .07],  # so called `eta` value
-                      'max_depth': [5, 6, 7],
-                      'min_child_weight': [4],
-                      'subsample': [0.7],
-                      'colsample_bytree': [0.7],
-                      'n_estimators': [1, 4, 10, 50, 100, 500]}
+        scorer = sklearn.metrics.make_scorer(sklearn.metrics.f1_score, average='weighted')
+        parameters = {"subsample": [0.5, 0.75, 1],
+                      "colsample_bytree": [0.5, 0.75, 1],
+                      "min_child_weight": [1,5,15],
+                      'max_depth': range(2, 10, 1),
+                      'n_estimators': range(60, 220, 20),
+                      'learning_rate': [0.1, 0.3, 0.03, 0.01, 0.05]
+                      }
 
-        xgb = XGBRegressor()
+        xgb = XGBClassifier()
         random_search = GridSearchCV(xgb,
                         parameters,
-                        cv=5,
+                        scoring='roc_auc',
+                        cv=7,
                         n_jobs=5,
                         verbose=True)
         random_search.fit(X_train, y_train)
@@ -197,6 +210,6 @@ class FlightsArrivalTimePrediction:
 
 if __name__ == "__main__":
     flights_arrival_time_prediction = FlightsArrivalTimePrediction()
-    # fareMLPrediction.hyperparameters_optimization()
-    model, X_test, y_test = flights_arrival_time_prediction.ml_flow()
+    flights_arrival_time_prediction.hyperparameters_optimization()
+    # model, X_test, y_test = flights_arrival_time_prediction.ml_flow()
     # fareMLPrediction.explainability(model, X_test, y_test)

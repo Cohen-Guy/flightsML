@@ -24,11 +24,11 @@ class FareMLEDA:
         self.categorical_cols = [categorical_col['field_name'] for categorical_col in self.globals_context.cols_dict['categorical_cols'] if not categorical_col['exclude_feature_from_training']]
         self.numerical_cols = [numerical_col['field_name'] for numerical_col in self.globals_context.cols_dict['numerical_cols'] if not numerical_col['exclude_feature_from_training']]
         self.datetime_cols = [datetime_col['field_name'] for datetime_col in self.globals_context.cols_dict['datetime_cols'] if not datetime_col['exclude_feature_from_training']]
-        self.all_columns = self.boolean_cols + self.ordinal_cols + self.categorical_cols + self.numerical_cols + self.datetime_cols + [self.target_ordinal_bucket_col_name]
+        self.selected_columns = self.boolean_cols + self.ordinal_cols + self.categorical_cols + self.numerical_cols + self.datetime_cols + [self.target_ordinal_bucket_col_name]
 
 
     def feature_selection(self, dataset):
-        return dataset[self.all_columns]
+        return dataset[self.selected_columns]
 
     def basic_info(self, dataset):
         print(f"shape:\n {dataset.shape}")
@@ -102,40 +102,15 @@ class FareMLEDA:
     def scatter_matrix(self):
         fig = px.scatter_matrix(self.dataset)
         fig.show()
-
-    def transform_delay_bucket_to_ordinal(self, dataset):
-        dataset['DelayBucketOrdinal'] = dataset['DelayBucket']
-        mapping = {'{-10000, -60}': -6, '{-60, -45}': -5, '{-45, -30}': -4, '{-30, -15}': -3, '{-15, -5}':-2, '{-5, 0}': -1, '{0, 5}': 1, '{5, 15}': 2,'{15, 30}':3, '{30, 45}':4, '{45, 60}':5, '{60, 10000}': 6}
-        dataset = dataset.replace({'DelayBucketOrdinal': mapping})
-        dataset['DelayBucketOrdinal'] = dataset['DelayBucketOrdinal'].astype('Int64')
-        return dataset
-
-    def divide_target_to_buckets(self, dataset, target_col_name, target_bucket_col_name):
-        dataset.loc[dataset[target_col_name].between(-10000, -60, 'both'), target_bucket_col_name] = '{-10000, -60}'
-        dataset.loc[dataset[target_col_name].between(-60, -45, 'right'), target_bucket_col_name] = '{-60, -45}'
-        dataset.loc[dataset[target_col_name].between(-45, -30, 'right'), target_bucket_col_name] = '{-45, -30}'
-        dataset.loc[dataset[target_col_name].between(-30, -15, 'right'), target_bucket_col_name] = '{-30, -15}'
-        dataset.loc[dataset[target_col_name].between(-15, -5, 'right'), target_bucket_col_name] = '{-15, -5}'
-        dataset.loc[dataset[target_col_name].between(-5, 0, 'right'), target_bucket_col_name] = '{-5, 0}'
-        dataset.loc[dataset[target_col_name].between(0, 5, 'left'), target_bucket_col_name] = '{0, 5}'
-        dataset.loc[dataset[target_col_name].between(5, 15, 'left'), target_bucket_col_name] = '{5, 15}'
-        dataset.loc[dataset[target_col_name].between(15, 30, 'left'), target_bucket_col_name] = '{15, 30}'
-        dataset.loc[dataset[target_col_name].between(30, 45, 'left'), target_bucket_col_name] = '{30, 45}'
-        dataset.loc[dataset[target_col_name].between(45, 60, 'left'), target_bucket_col_name] = '{45, 60}'
-        dataset.loc[dataset[target_col_name].between(60, 10000, 'both'), target_bucket_col_name] = '{60, 10000}'
-        dataset = self.transform_delay_bucket_to_ordinal(dataset)
-        return dataset
-
     def dataset_extract_target(self, dataset):
         target_col_name = 'ArrDelay'
-        return self.divide_target_to_buckets(self.dataset, target_col_name, self.target_bucket_col_name)
+        return self.globals_context.divide_target_to_buckets(self.dataset, target_col_name, self.target_bucket_col_name)
 
     def eda(self):
         dataset = self.dataset_extract_target(self.dataset)
         dataset = self.feature_selection(dataset)
         self.basic_info(dataset)
         self.correlation(dataset)
-
         self.plots_for_columns('CarrierDelay', 'DelayBucketOrdinal')
         self.plots_for_columns('WeatherDelay', 'DelayBucketOrdinal')
         self.plots_for_columns('NASDelay', 'DelayBucketOrdinal')

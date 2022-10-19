@@ -201,3 +201,23 @@ class GlobalsContextClass:
                     'exclude_feature_from_training': False,
                 },
         }
+
+    def transform_delay_bucket_to_ordinal(self, dataset):
+        dataset['DelayBucketOrdinal'] = dataset['DelayBucket']
+        mapping = {'{-10000, -60}': -5, '{-60, -45}': -4, '{-45, -30}': -3, '{-30, -15}': -2, '{-15, 0}':-1, '{0, 15}': 1, '{15, 30}':2, '{30, 45}':3, '{45, 60}':4, '{60, 10000}': 5}
+        dataset = dataset.replace({'DelayBucketOrdinal': mapping})
+        dataset['DelayBucketOrdinal'] = dataset['DelayBucketOrdinal'].astype('Int64')
+        return dataset
+
+    def divide_target_to_buckets(self, dataset, target_col_name, target_bucket_col_name):
+        dataset.loc[dataset[target_col_name].between(-10000, -60, 'both'), target_bucket_col_name] = '{-10000, -60}'
+        dataset.loc[dataset[target_col_name].between(-60, -45, 'right'), target_bucket_col_name] = '{-60, -45}'
+        dataset.loc[dataset[target_col_name].between(-45, -30, 'right'), target_bucket_col_name] = '{-45, -30}'
+        dataset.loc[dataset[target_col_name].between(-30, -15, 'right'), target_bucket_col_name] = '{-30, -15}'
+        dataset.loc[dataset[target_col_name].between(-15, 0, 'right'), target_bucket_col_name] = '{-15, 0}'
+        dataset.loc[dataset[target_col_name].between(0, 15, 'left'), target_bucket_col_name] = '{0, 15}'
+        dataset.loc[dataset[target_col_name].between(15, 30, 'left'), target_bucket_col_name] = '{15, 30}'
+        dataset.loc[dataset[target_col_name].between(30, 45, 'left'), target_bucket_col_name] = '{30, 45}'
+        dataset.loc[dataset[target_col_name].between(45, 60, 'left'), target_bucket_col_name] = '{45, 60}'
+        dataset.loc[dataset[target_col_name].between(60, 10000, 'both'), target_bucket_col_name] = '{60, 10000}'
+        return dataset
