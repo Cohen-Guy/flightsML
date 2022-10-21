@@ -33,7 +33,6 @@ class HyperParametersTunning:
             "subsample": trial.suggest_float("subsample", 0.2, 1.0),
             # sampling according to each tree.
             "colsample_bytree": trial.suggest_float("colsample_bytree", 0.2, 1.0),
-
         }
 
         if param["booster"] in ["gbtree", "dart"]:
@@ -72,7 +71,7 @@ class HyperParametersTunning:
 
     def optimize(self):
         study = optuna.create_study(direction="maximize")
-        study.optimize(self.objective_cv, n_trials=100, timeout=600)
+        study.optimize(self.objective_cv, n_trials=100, timeout=6000)
         print("Number of finished trials: ", len(study.trials))
         print("Best trial:")
         trial = study.best_trial
