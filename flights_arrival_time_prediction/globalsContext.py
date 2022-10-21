@@ -204,7 +204,7 @@ class GlobalsContextClass:
 
     def transform_delay_bucket_to_ordinal(self, dataset):
         dataset['DelayBucketOrdinal'] = dataset['DelayBucket']
-        mapping = {'{-10000, -60}': -5, '{-60, -45}': -4, '{-45, -30}': -3, '{-30, -15}': -2, '{-15, 0}':-1, '{0, 15}': 1, '{15, 30}':2, '{30, 45}':3, '{45, 60}':4, '{60, 10000}': 5}
+        mapping = {'{-10000, -60}': -5, '{-60, -45}': -4, '{-45, -30}': -3, '{-30, -15}': -2, '{-15, -3}':-1, '{-3, 3}':0, '{3, 15}': 1, '{15, 30}':2, '{30, 45}':3, '{45, 60}':4, '{60, 10000}': 5}
         dataset = dataset.replace({'DelayBucketOrdinal': mapping})
         dataset['DelayBucketOrdinal'] = dataset['DelayBucketOrdinal'].astype('Int64')
         return dataset
@@ -214,10 +214,11 @@ class GlobalsContextClass:
         dataset.loc[dataset[target_col_name].between(-60, -45, 'right'), target_bucket_col_name] = '{-60, -45}'
         dataset.loc[dataset[target_col_name].between(-45, -30, 'right'), target_bucket_col_name] = '{-45, -30}'
         dataset.loc[dataset[target_col_name].between(-30, -15, 'right'), target_bucket_col_name] = '{-30, -15}'
-        dataset.loc[dataset[target_col_name].between(-15, 0, 'right'), target_bucket_col_name] = '{-15, 0}'
-        dataset.loc[dataset[target_col_name].between(0, 15, 'left'), target_bucket_col_name] = '{0, 15}'
-        dataset.loc[dataset[target_col_name].between(15, 30, 'left'), target_bucket_col_name] = '{15, 30}'
-        dataset.loc[dataset[target_col_name].between(30, 45, 'left'), target_bucket_col_name] = '{30, 45}'
-        dataset.loc[dataset[target_col_name].between(45, 60, 'left'), target_bucket_col_name] = '{45, 60}'
-        dataset.loc[dataset[target_col_name].between(60, 10000, 'both'), target_bucket_col_name] = '{60, 10000}'
+        dataset.loc[dataset[target_col_name].between(-15, -3, 'right'), target_bucket_col_name] = '{-15, -3}'
+        dataset.loc[dataset[target_col_name].between(-3, 3, 'right'), target_bucket_col_name] = '{-3, 3}'
+        dataset.loc[dataset[target_col_name].between(3, 15, 'right'), target_bucket_col_name] = '{3, 15}'
+        dataset.loc[dataset[target_col_name].between(15, 30, 'right'), target_bucket_col_name] = '{15, 30}'
+        dataset.loc[dataset[target_col_name].between(30, 45, 'right'), target_bucket_col_name] = '{30, 45}'
+        dataset.loc[dataset[target_col_name].between(45, 60, 'right'), target_bucket_col_name] = '{45, 60}'
+        dataset.loc[dataset[target_col_name].between(60, 10000, 'right'), target_bucket_col_name] = '{60, 10000}'
         return dataset

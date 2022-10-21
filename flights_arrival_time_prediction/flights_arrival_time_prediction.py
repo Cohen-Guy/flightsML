@@ -21,7 +21,7 @@ from sklearn.preprocessing import LabelEncoder
 from globalsContext import GlobalsContextClass
 from sklearn.metrics import accuracy_score
 from sklearn.preprocessing import StandardScaler
-import sklearn
+from hyper_parameters_tunning import HyperParametersTunning
 class FlightsArrivalTimePrediction:
 
     def __init__(self):
@@ -188,24 +188,8 @@ class FlightsArrivalTimePrediction:
 
     def hyperparameters_optimization(self):
         X_train, X_test, y_train, y_test = self.preprocessing(self.dataset)
-        scorer = sklearn.metrics.make_scorer(sklearn.metrics.f1_score, average='weighted')
-        parameters = {"subsample": [0.5, 0.75, 1],
-                      "colsample_bytree": [0.5, 0.75, 1],
-                      "min_child_weight": [1, 5, 15],
-                      'max_depth': range(3, 10, 1),
-                      'n_estimators': range(60, 220, 40),
-                      'learning_rate': [0.1, 0.05, 0.01]
-                      }
-
-        xgb = XGBClassifier()
-        random_search = GridSearchCV(xgb,
-                        parameters,
-                        scoring=scorer,
-                        cv=5,
-                        n_jobs=5,
-                        verbose=True)
-        random_search.fit(X_train, y_train)
-        print(random_search.best_params_)
+        self.hyperParametersTunning = HyperParametersTunning(X_train, X_test, y_train, y_test)
+        self.hyperParametersTunning.optimize()
 
 
 if __name__ == "__main__":
