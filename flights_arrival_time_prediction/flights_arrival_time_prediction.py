@@ -201,7 +201,7 @@ class FlightsArrivalTimePrediction:
         random_search = GridSearchCV(xgb,
                         parameters,
                         scoring=scorer,
-                        cv=7,
+                        cv=5,
                         n_jobs=5,
                         verbose=True)
         random_search.fit(X_train, y_train)
