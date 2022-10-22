@@ -71,7 +71,7 @@ class HyperParametersTunning:
 
     def optimize(self):
         study = optuna.create_study(direction="maximize")
-        study.optimize(self.objective_cv, n_trials=100, timeout=6000)
+        study.optimize(self.objective_cv, n_trials=300, timeout=36000)
         print("Number of finished trials: ", len(study.trials))
         print("Best trial:")
         trial = study.best_trial

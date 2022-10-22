@@ -22,6 +22,9 @@ from globalsContext import GlobalsContextClass
 from sklearn.metrics import accuracy_score
 from sklearn.preprocessing import StandardScaler
 from hyper_parameters_tunning import HyperParametersTunning
+import plotly.figure_factory as ff
+from sklearn.metrics import confusion_matrix
+
 class FlightsArrivalTimePrediction:
 
     def __init__(self):
@@ -103,7 +106,23 @@ class FlightsArrivalTimePrediction:
     #     return model
 
     def train_xgboost_classifier(self, X_train, y_train):
-        model = XGBClassifier()
+        params = {
+            'booster': 'dart',
+            'lambda': 0.5642581562857996,
+                'alpha': 0.011964958656080679,
+        'subsample': 0.9664606774005825,
+        'colsample_bytree': 0.973523784845717,
+        'max_depth': 9,
+        'min_child_weight': 3,
+        'eta': 0.9741117119835012,
+        'gamma': 0.00015275824324089936,
+        'grow_policy': 'depthwise',
+        'sample_type': 'uniform',
+        'normalize_type': 'tree',
+        'rate_drop': 3.2087168422238625e-05,
+        'skip_drop': 3.4557151831426346e-05
+        }
+        model = XGBClassifier(params)
         model.fit(X_train, y_train)
         return model
 
@@ -173,17 +192,21 @@ class FlightsArrivalTimePrediction:
 
     def evaluate_test(self, model, X, y):
         y_pred = model.predict(X)
-        root_mean_square_error = mean_squared_error(y, y_pred, squared=False)
-        return X, root_mean_square_error
+        accuracy = accuracy_score(y, y_pred)
+        X['y_true'] = y
+        X['y_pred'] = y_pred
+        return X, accuracy
 
 
     def ml_flow(self):
         X_train, X_test, y_train, y_test = self.preprocessing(self.dataset)
         model = self.train_xgboost_classifier(X_train, y_train)
-        X_train, train_root_mean_square_error = self.evaluate_train(model, X_train, y_train)
-        print(f"train_root_mean_square_error: {train_root_mean_square_error}")
-        X_test, test_root_mean_square_error = self.evaluate_test(model, X_test, y_test)
-        print(f"test_root_mean_square_error: {test_root_mean_square_error}")
+        X_train, train_accuracy = self.evaluate_train(model, X_train, y_train)
+        print(f"train_accuracy: {train_accuracy}")
+        self.confusion_matrix_plot(X_train['y_true'], X_train['y_pred'])
+        X_test, test_accuracy = self.evaluate_test(model, X_test, y_test)
+        print(f"test_accuracy: {test_accuracy}")
+        self.confusion_matrix_plot(X_test['y_true'], X_test['y_pred'])
         return model, X_test, y_test
 
     def hyperparameters_optimization(self):
@@ -192,8 +215,51 @@ class FlightsArrivalTimePrediction:
         self.hyperParametersTunning.optimize()
 
 
+    def confusion_matrix_plot(self, y_true, y_pred):
+        delay_bucket_confusion_matrix = confusion_matrix(y_true, y_pred)
+        x = ['{-10000, -60}', '{-60, -45}', '{-45, -30}', '{-30, -15}', '{-15, -3}', '{-3, 3}', '{3, 15}', '{15, 30}', '{30, 45}', '{45, 60}', '{60, 10000}']
+        y = ['{-10000, -60}', '{-60, -45}', '{-45, -30}', '{-30, -15}', '{-15, -3}', '{-3, 3}', '{3, 15}', '{15, 30}', '{30, 45}', '{45, 60}', '{60, 10000}']
+
+        # change each element of z to type string for annotations
+        z_text = [[str(y) for y in x] for x in delay_bucket_confusion_matrix]
+
+        # set up figure
+        fig = ff.create_annotated_heatmap(delay_bucket_confusion_matrix, x=x, y=y, annotation_text=z_text, colorscale='Viridis')
+
+        # add title
+        fig.update_layout(title_text='<i><b>Confusion matrix</b></i>',
+                          # xaxis = dict(title='x'),
+                          # yaxis = dict(title='x')
+                          )
+
+        # add custom xaxis title
+        fig.add_annotation(dict(font=dict(color="black", size=14),
+                                x=0.5,
+                                y=-0.15,
+                                showarrow=False,
+                                text="Predicted value",
+                                xref="paper",
+                                yref="paper"))
+
+        # add custom yaxis title
+        fig.add_annotation(dict(font=dict(color="black", size=14),
+                                x=-0.35,
+                                y=0.5,
+                                showarrow=False,
+                                text="Real value",
+                                textangle=-90,
+                                xref="paper",
+                                yref="paper"))
+
+        # adjust margins to make room for yaxis title
+        fig.update_layout(margin=dict(t=50, l=200))
+
+        # add colorbar
+        fig['data'][0]['showscale'] = True
+        fig.show()
+
 if __name__ == "__main__":
     flights_arrival_time_prediction = FlightsArrivalTimePrediction()
-    flights_arrival_time_prediction.hyperparameters_optimization()
-    # model, X_test, y_test = flights_arrival_time_prediction.ml_flow()
+    # flights_arrival_time_prediction.hyperparameters_optimization()
+    model, X_test, y_test = flights_arrival_time_prediction.ml_flow()
     # fareMLPrediction.explainability(model, X_test, y_test)

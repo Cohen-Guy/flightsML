@@ -24,7 +24,7 @@ class FareMLEDA:
         self.categorical_cols = [categorical_col['field_name'] for categorical_col in self.globals_context.cols_dict['categorical_cols'] if not categorical_col['exclude_feature_from_training']]
         self.numerical_cols = [numerical_col['field_name'] for numerical_col in self.globals_context.cols_dict['numerical_cols'] if not numerical_col['exclude_feature_from_training']]
         self.datetime_cols = [datetime_col['field_name'] for datetime_col in self.globals_context.cols_dict['datetime_cols'] if not datetime_col['exclude_feature_from_training']]
-        self.selected_columns = self.boolean_cols + self.ordinal_cols + self.categorical_cols + self.numerical_cols + self.datetime_cols + [self.target_ordinal_bucket_col_name]
+        self.selected_columns = self.boolean_cols + self.ordinal_cols + self.categorical_cols + self.numerical_cols + self.datetime_cols + [self.target_bucket_col_name]
 
 
     def feature_selection(self, dataset):
@@ -38,7 +38,19 @@ class FareMLEDA:
         print(f"describe:\n {dataset.describe(include='all')}")
 
     def correlation(self, dataset):
+        self.corr_boolean_cols = [boolean_col['field_name'] for boolean_col in self.globals_context.cols_dict['boolean_cols'] if boolean_col['include_in_correlation']]
+        self.corr_ordinal_cols = [ordinal_col['field_name'] for ordinal_col in self.globals_context.cols_dict['ordinal_cols'] if ordinal_col['include_in_correlation']]
+        self.corr_categorical_cols = [categorical_col['field_name'] for categorical_col in self.globals_context.cols_dict['categorical_cols'] if
+                                 categorical_col['include_in_correlation']]
+        self.corr_numerical_cols = [numerical_col['field_name'] for numerical_col in self.globals_context.cols_dict['numerical_cols'] if
+                               numerical_col['include_in_correlation']]
+        self.corr_datetime_cols = [datetime_col['field_name'] for datetime_col in self.globals_context.cols_dict['datetime_cols'] if datetime_col['include_in_correlation']]
+        self.corr_columns = self.corr_boolean_cols + self.corr_ordinal_cols + self.corr_categorical_cols + self.corr_numerical_cols + self.corr_datetime_cols + [self.target_ordinal_bucket_col_name]
+        dataset = self.globals_context.transform_delay_bucket_to_ordinal(dataset)
+        dataset.pop('DelayBucket')
+        dataset = dataset[self.corr_columns]
         corr = dataset.corr(numeric_only=True)
+        corr = corr.round(3)
         mask = np.triu(np.ones_like(corr, dtype=bool))
         df_mask = corr.mask(mask)
         fig = ff.create_annotated_heatmap(z=df_mask.to_numpy(),
@@ -49,7 +61,6 @@ class FareMLEDA:
                                           showscale=True, ygap=1, xgap=1
                                           )
         fig.update_xaxes(side="bottom")
-        fig.update_traces(texttemplate='%{value: .3f}')
 
         fig.update_layout(
             title_text='Heatmap',
@@ -111,11 +122,11 @@ class FareMLEDA:
         dataset = self.feature_selection(dataset)
         self.basic_info(dataset)
         self.correlation(dataset)
-        self.plots_for_columns('CarrierDelay', 'DelayBucketOrdinal')
-        self.plots_for_columns('WeatherDelay', 'DelayBucketOrdinal')
-        self.plots_for_columns('NASDelay', 'DelayBucketOrdinal')
-        self.plots_for_columns('SecurityDelay', 'DelayBucketOrdinal')
-        self.plots_for_columns('LateAircraftDelay', 'DelayBucketOrdinal')
+        self.plots_for_columns('CarrierDelay', self.target_bucket_col_name)
+        self.plots_for_columns('WeatherDelay', self.target_bucket_col_name)
+        self.plots_for_columns('NASDelay', self.target_bucket_col_name)
+        self.plots_for_columns('SecurityDelay', self.target_bucket_col_name)
+        self.plots_for_columns('LateAircraftDelay', self.target_bucket_col_name)
 
 
 if __name__ == "__main__":
