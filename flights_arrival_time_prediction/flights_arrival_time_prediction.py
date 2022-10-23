@@ -66,8 +66,6 @@ class FlightsArrivalTimePrediction:
         return X
 
     def encoding(self, X, y):
-        label_encoder = LabelEncoder()
-        y = label_encoder.fit_transform(y)
         target_encoder = TargetEncoder()
         X[self.categorical_cols] = target_encoder.fit_transform(X[self.categorical_cols], y)
         return X, y
@@ -87,7 +85,7 @@ class FlightsArrivalTimePrediction:
         dataset = self.transform_types(dataset)
         X, y = self.dataset_extract_target(dataset)
         X = self.feature_selection(X)
-        X = self.globals_context.feature_engineering(X)
+        X = self.globals_context.feature_engineering(X, False, False, False)
         # X = self.scaling(X)
         X, y = self.encoding(X, y)
         # excluded_column = 'departure_date'
@@ -259,6 +257,6 @@ class FlightsArrivalTimePrediction:
 
 if __name__ == "__main__":
     flights_arrival_time_prediction = FlightsArrivalTimePrediction()
-    # flights_arrival_time_prediction.hyperparameters_optimization()
-    model, X_test, y_test = flights_arrival_time_prediction.ml_flow()
+    flights_arrival_time_prediction.hyperparameters_optimization()
+    # model, X_test, y_test = flights_arrival_time_prediction.ml_flow()
     # fareMLPrediction.explainability(model, X_test, y_test)

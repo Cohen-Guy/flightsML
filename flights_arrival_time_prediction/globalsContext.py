@@ -223,7 +223,14 @@ class GlobalsContextClass:
                     'description': '',
                     'exclude_feature_from_training': False,
                     'include_in_correlation': False,
-                }],
+                },
+                    {
+                        'field_name': 'FlightDate',
+                        'description': '',
+                        'exclude_feature_from_training': True,
+                        'include_in_correlation': False,
+                    }
+                ],
             'special_handling_cols':
                 [],
             'target_col':
@@ -256,8 +263,11 @@ class GlobalsContextClass:
         dataset.loc[dataset[target_col_name].between(60, 10000, 'right'), target_bucket_col_name] = '{60, 10000}'
         return dataset
 
-    def feature_engineering(self, X):
-        X['Year'] = pd.to_datetime(X['Year'], format='%Y')
-        X['Month'] = pd.to_datetime(X['Month'], format='%m')
-        X['FlightDate'] = pd.to_datetime(X['FlightDate'], format='%Y-%m-%d')
+    def feature_engineering(self, X, isFlightDate, isYear, isMonth):
+        if isYear:
+            X['Year'] = pd.to_datetime(X['Year'], format='%Y')
+        if isMonth:
+            X['Month'] = pd.to_datetime(X['Month'], format='%m')
+        if isFlightDate:
+            X['FlightDate'] = pd.to_datetime(X['FlightDate'], format='%Y-%m-%d')
         return X

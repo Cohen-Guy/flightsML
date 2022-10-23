@@ -5,7 +5,10 @@ import sklearn.datasets
 import sklearn.metrics
 from sklearn.model_selection import train_test_split
 import xgboost as xgb
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.svm import SVC
 from sklearn.model_selection import KFold
+from sklearn.neighbors import KNeighborsClassifier
 
 class HyperParametersTunning:
     def __init__(self, train_x, valid_x, train_y, valid_y):
@@ -13,7 +16,8 @@ class HyperParametersTunning:
         self.train_y = train_y
         self.valid_x = valid_x
         self.valid_y = valid_y
-    def objective(self, trial):
+
+    def objective_xgb(self, trial):
         dtrain = xgb.DMatrix(self.train_cv_X, label=self.train_cv_y)
         dvalid = xgb.DMatrix(self.valid_cv_X, label=self.valid_cv_y)
 
@@ -57,21 +61,96 @@ class HyperParametersTunning:
         accuracy = sklearn.metrics.accuracy_score(self.valid_cv_y, pred_labels)
         return accuracy
 
-    def objective_cv(self, trial):
+    def objective_cv_xgb(self, trial):
         fold = KFold(n_splits=5, shuffle=True, random_state=42)
         scores = []
-        for fold_idx, (train_idx, valid_idx) in enumerate(fold.split(range(len(self.train_x)))):
+        for train_idx, valid_idx in fold.split(range(len(self.train_x))):
             self.train_cv_X = self.train_x.iloc[train_idx]
             self.train_cv_y = self.train_y[train_idx]
             self.valid_cv_X = self.train_x.iloc[valid_idx]
             self.valid_cv_y = self.train_y[valid_idx]
-            accuracy = self.objective(trial)
+            accuracy = self.objective_xgb(trial)
+            scores.append(accuracy)
+        return np.mean(scores)
+
+    def objective_rf(self, trial):
+        params = {
+            'n_estimators': trial.suggest_int("rf_n_estimators", 10, 1000),
+            'max_depth': trial.suggest_int("rf_max_depth", 2, 32, log=True),
+            'min_samples_split': trial.suggest_int('min_samples_split', 1, 150),
+            'min_samples_leaf': trial.suggest_int('min_samples_leaf', 1, 60),
+        }
+
+        clf = RandomForestClassifier(random_state=42, **params)
+        bst = clf.fit(self.train_cv_X, self.train_cv_y)
+        preds = bst.predict(self.valid_cv_X)
+        pred_labels = np.rint(preds)
+        accuracy = sklearn.metrics.accuracy_score(self.valid_cv_y, pred_labels)
+        return accuracy
+
+    def objective_cv_rf(self, trial):
+        fold = KFold(n_splits=5, shuffle=True, random_state=42)
+        scores = []
+        for fold_idx, (train_idx, valid_idx) in enumerate(fold.split(range(len(self.train_x)))):
+            self.train_cv_X = self.train_x.iloc[train_idx]
+            self.train_cv_y = self.train_y.iloc[train_idx].astype('int')
+            self.valid_cv_X = self.train_x.iloc[valid_idx]
+            self.valid_cv_y = self.train_y.iloc[valid_idx].astype('int')
+            accuracy = self.objective_rf(trial)
+            scores.append(accuracy)
+        return np.mean(scores)
+
+    def objective_svm(self, trial):
+        svc_c = trial.suggest_float("svc_c", 1e-10, 1e10, log=True)
+        clf = SVC(C=svc_c, gamma="auto")
+        bst = clf.fit(self.train_cv_X, self.train_cv_y)
+        preds = bst.predict(self.valid_cv_X)
+        pred_labels = np.rint(preds)
+        accuracy = sklearn.metrics.accuracy_score(self.valid_cv_y, pred_labels)
+        return accuracy
+
+    def objective_cv_svm(self, trial):
+        fold = KFold(n_splits=5, shuffle=True, random_state=42)
+        scores = []
+        for fold_idx, (train_idx, valid_idx) in enumerate(fold.split(range(len(self.train_x)))):
+            self.train_cv_X = self.train_x.iloc[train_idx]
+            self.train_cv_y = self.train_y.iloc[train_idx].astype('int')
+            self.valid_cv_X = self.train_x.iloc[valid_idx]
+            self.valid_cv_y = self.train_y.iloc[valid_idx].astype('int')
+            accuracy = self.objective_svm(trial)
+            scores.append(accuracy)
+        return np.mean(scores)
+
+    def objective_knn(self, trial):
+        optimizer = trial.suggest_categorical('algorithm', ['auto', 'ball_tree', 'kd_tree', 'brute'])
+        rf_max_depth = trial.suggest_int("k_n_neighbors", 2, 10, log=True)
+        clf = KNeighborsClassifier(n_neighbors=rf_max_depth, algorithm=optimizer)
+        bst = clf.fit(self.train_cv_X, self.train_cv_y)
+        preds = bst.predict(self.valid_cv_X)
+        pred_labels = np.rint(preds)
+        accuracy = sklearn.metrics.accuracy_score(self.valid_cv_y, pred_labels)
+        return accuracy
+
+    def objective_cv_knn(self, trial):
+        fold = KFold(n_splits=5, shuffle=True, random_state=42)
+        scores = []
+        for fold_idx, (train_idx, valid_idx) in enumerate(fold.split(range(len(self.train_x)))):
+            self.train_cv_X = self.train_x.iloc[train_idx]
+            self.train_cv_y = self.train_y.iloc[train_idx].astype('int')
+            self.valid_cv_X = self.train_x.iloc[valid_idx]
+            self.valid_cv_y = self.train_y.iloc[valid_idx].astype('int')
+            accuracy = self.objective_knn(trial)
             scores.append(accuracy)
         return np.mean(scores)
 
     def optimize(self):
         study = optuna.create_study(direction="maximize")
-        study.optimize(self.objective_cv, n_trials=300, timeout=36000)
+        # print('RandomForestClassifier')
+        # study.optimize(self.objective_cv_rf, n_trials=600, timeout=100000)
+        # print('SVC')
+        # study.optimize(self.objective_cv_svm, n_trials=600, timeout=100000)
+        print('KNeighborsClassifier')
+        study.optimize(self.objective_cv_knn, n_trials=600, timeout=100000)
         print("Number of finished trials: ", len(study.trials))
         print("Best trial:")
         trial = study.best_trial
