@@ -10,7 +10,7 @@ from sklearn.metrics import mean_squared_error
 from sklearn.tree import DecisionTreeRegressor
 # from sklearn.linear_model import LinearRegression
 # from xgboost import XGBRegressor
-# from sklearn.ensemble import RandomForestRegressor
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from xgboost import XGBClassifier
 import shap
@@ -57,8 +57,7 @@ class FlightsArrivalTimePrediction:
         X = X[self.selected_columns]
         return X
 
-    def feature_engineering(self, X):
-        return X
+
 
     def outlier_detection(self, X, excluded_column):
         isolation_forest_model = IsolationForest(max_samples=100, random_state=42)
@@ -88,7 +87,7 @@ class FlightsArrivalTimePrediction:
         dataset = self.transform_types(dataset)
         X, y = self.dataset_extract_target(dataset)
         X = self.feature_selection(X)
-        # X = self.feature_engineering(X)
+        X = self.globals_context.feature_engineering(X)
         # X = self.scaling(X)
         X, y = self.encoding(X, y)
         # excluded_column = 'departure_date'
@@ -178,10 +177,10 @@ class FlightsArrivalTimePrediction:
         partial_dependence_diagram.savefig(partial_dependence_diagram_path, format='png', dpi=600, bbox_inches='tight')
         plt.clf()
 
-    # def train_random_forest_regressor(self, X_train, y_train):
-    #     model = RandomForestRegressor()
-    #     model.fit(X_train, y_train)
-    #     return model
+    def train_random_forest_classifier(self, X_train, y_train):
+        model = RandomForestClassifier()
+        model.fit(X_train, y_train)
+        return model
 
     def evaluate_train(self, model, X, y):
         y_pred = model.predict(X)

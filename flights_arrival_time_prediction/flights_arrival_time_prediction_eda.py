@@ -7,6 +7,10 @@ import numpy as np
 import plotly.figure_factory as ff
 from globalsContext import GlobalsContextClass
 import datetime
+import sweetviz as sv
+import matplotlib
+matplotlib.use('TkAgg')
+import matplotlib.pyplot as plt
 
 class FareMLEDA:
 
@@ -16,18 +20,19 @@ class FareMLEDA:
         self.debug_flag = True
         self.target_bucket_col_name = 'DelayBucket'
         self.target_ordinal_bucket_col_name = 'DelayBucketOrdinal'
-        dataset_csv_file_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data', 'flights_arrival_time_prediction', 'On_Time_Reporting_Carrier_On_Time_Performance_(1987_present)_2021_1.csv')
-        self.dataset = pd.read_csv(dataset_csv_file_path)
+        self.dataset_csv_file_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data', 'flights_arrival_time_prediction', 'On_Time_Reporting_Carrier_On_Time_Performance_(1987_present)_2021_1.csv')
+        self.dataset = pd.read_csv(self.dataset_csv_file_path)
         self.globals_context = GlobalsContextClass(time_str)
-        self.boolean_cols = [boolean_col['field_name'] for boolean_col in self.globals_context.cols_dict['boolean_cols'] if not boolean_col['exclude_feature_from_training']]
-        self.ordinal_cols = [ordinal_col['field_name'] for ordinal_col in self.globals_context.cols_dict['ordinal_cols'] if not ordinal_col['exclude_feature_from_training']]
-        self.categorical_cols = [categorical_col['field_name'] for categorical_col in self.globals_context.cols_dict['categorical_cols'] if not categorical_col['exclude_feature_from_training']]
-        self.numerical_cols = [numerical_col['field_name'] for numerical_col in self.globals_context.cols_dict['numerical_cols'] if not numerical_col['exclude_feature_from_training']]
-        self.datetime_cols = [datetime_col['field_name'] for datetime_col in self.globals_context.cols_dict['datetime_cols'] if not datetime_col['exclude_feature_from_training']]
-        self.selected_columns = self.boolean_cols + self.ordinal_cols + self.categorical_cols + self.numerical_cols + self.datetime_cols + [self.target_bucket_col_name]
-
 
     def feature_selection(self, dataset):
+        self.boolean_cols = [boolean_col['field_name'] for boolean_col in self.globals_context.cols_dict['boolean_cols'] if not boolean_col['exclude_feature_from_training']]
+        self.ordinal_cols = [ordinal_col['field_name'] for ordinal_col in self.globals_context.cols_dict['ordinal_cols'] if not ordinal_col['exclude_feature_from_training']]
+        self.categorical_cols = [categorical_col['field_name'] for categorical_col in self.globals_context.cols_dict['categorical_cols'] if
+                                 not categorical_col['exclude_feature_from_training']]
+        self.numerical_cols = [numerical_col['field_name'] for numerical_col in self.globals_context.cols_dict['numerical_cols'] if
+                               not numerical_col['exclude_feature_from_training']]
+        self.datetime_cols = [datetime_col['field_name'] for datetime_col in self.globals_context.cols_dict['datetime_cols'] if not datetime_col['exclude_feature_from_training']]
+        self.selected_columns = self.boolean_cols + self.ordinal_cols + self.categorical_cols + self.numerical_cols + self.datetime_cols + [self.target_bucket_col_name]
         return dataset[self.selected_columns]
 
     def basic_info(self, dataset):
@@ -93,6 +98,10 @@ class FareMLEDA:
         # )
         # fig.show()
 
+    def create_visualizations(self, dataset):
+        advert_report = sv.analyze(dataset)
+        advert_report.show_html('eda_report.html')
+
     def plots_for_columns(self, x_column_name, y_column_name):
         self.scatter_plot(x_column_name, y_column_name)
         self.histogram(x_column_name, y_column_name)
@@ -119,14 +128,18 @@ class FareMLEDA:
 
     def eda(self):
         dataset = self.dataset_extract_target(self.dataset)
-        dataset = self.feature_selection(dataset)
         self.basic_info(dataset)
         self.correlation(dataset)
-        self.plots_for_columns('CarrierDelay', self.target_bucket_col_name)
-        self.plots_for_columns('WeatherDelay', self.target_bucket_col_name)
-        self.plots_for_columns('NASDelay', self.target_bucket_col_name)
-        self.plots_for_columns('SecurityDelay', self.target_bucket_col_name)
-        self.plots_for_columns('LateAircraftDelay', self.target_bucket_col_name)
+        dataset = self.globals_context.feature_engineering(dataset)
+        self.create_visualizations(dataset)
+        # dataset = self.feature_selection(dataset)
+        # dataset.intent
+        # self.plots_for_columns('CarrierDelay', self.target_bucket_col_name)
+        # self.plots_for_columns('WeatherDelay', self.target_bucket_col_name)
+        # self.plots_for_columns('NASDelay', self.target_bucket_col_name)
+        # self.plots_for_columns('SecurityDelay', self.target_bucket_col_name)
+        # self.plots_for_columns('LateAircraftDelay', self.target_bucket_col_name)
+        # dataset.intent = [self.selected_columns]
 
 
 if __name__ == "__main__":

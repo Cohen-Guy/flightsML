@@ -1,6 +1,6 @@
 import os
 import time
-
+import pandas as pd
 
 class GlobalsContextClass:
 
@@ -16,19 +16,19 @@ class GlobalsContextClass:
                     {
                         'field_name': 'Diverted',
                         'description': '',
-                        'exclude_feature_from_training': False,
+                        'exclude_feature_from_training': True,
                         'include_in_correlation': False,
                     },
                     {
                         'field_name': 'DivReachedDest',
                         'description': '',
-                        'exclude_feature_from_training': False,
+                        'exclude_feature_from_training': True,
                         'include_in_correlation': False,
                     },
                     {
                         'field_name': 'Cancelled',
                         'description': '',
-                        'exclude_feature_from_training': False,
+                        'exclude_feature_from_training': True,
                         'include_in_correlation': False,
                     },
                 ],
@@ -37,43 +37,43 @@ class GlobalsContextClass:
                     {
                         'field_name': 'Flights',
                         'description': '',
-                        'exclude_feature_from_training': False,
+                        'exclude_feature_from_training': True,
                         'include_in_correlation': False,
                     },
                     {
                         'field_name': 'CarrierDelay',
                         'description': '',
-                        'exclude_feature_from_training': False,
+                        'exclude_feature_from_training': True,
                         'include_in_correlation': True,
                     },
                     {
                         'field_name': 'WeatherDelay',
                         'description': '',
-                        'exclude_feature_from_training': False,
+                        'exclude_feature_from_training': True,
                         'include_in_correlation': True,
                     },
                     {
                         'field_name': 'NASDelay',
                         'description': '',
-                        'exclude_feature_from_training': False,
+                        'exclude_feature_from_training': True,
                         'include_in_correlation': True,
                     },
                     {
                         'field_name': 'SecurityDelay',
                         'description': '',
-                        'exclude_feature_from_training': False,
+                        'exclude_feature_from_training': True,
                         'include_in_correlation': True,
                     },
                     {
                         'field_name': 'LateAircraftDelay',
                         'description': '',
-                        'exclude_feature_from_training': False,
+                        'exclude_feature_from_training': True,
                         'include_in_correlation': True,
                     },
                     {
                         'field_name': 'DivAirportLandings',
                         'description': '',
-                        'exclude_feature_from_training': False,
+                        'exclude_feature_from_training': True,
                         'include_in_correlation': False,
                     },
                 ],
@@ -165,7 +165,7 @@ class GlobalsContextClass:
                     {
                         'field_name': 'AirTime',
                         'description': '',
-                        'exclude_feature_from_training': False,
+                        'exclude_feature_from_training': True,
                         'include_in_correlation': True,
                     },
                     {
@@ -177,43 +177,43 @@ class GlobalsContextClass:
                     {
                         'field_name': 'TotalAddGTime',
                         'description': '',
-                        'exclude_feature_from_training': False,
+                        'exclude_feature_from_training': True,
                         'include_in_correlation': False,
                     },
                     {
                         'field_name': 'LongestAddGTime',
                         'description': '',
-                        'exclude_feature_from_training': False,
+                        'exclude_feature_from_training': True,
                         'include_in_correlation': False,
                     },
                     {
                         'field_name': 'DivArrDelay',
                         'description': '',
-                        'exclude_feature_from_training': False,
+                        'exclude_feature_from_training': True,
                         'include_in_correlation': False,
                     },
                     {
                         'field_name': 'DivDistance',
                         'description': '',
-                        'exclude_feature_from_training': False,
+                        'exclude_feature_from_training': True,
                         'include_in_correlation': False,
                     },
                     {
                         'field_name': 'Div1TotalGTime',
                         'description': '',
-                        'exclude_feature_from_training': False,
+                        'exclude_feature_from_training': True,
                         'include_in_correlation': False,
                     },
                     {
                         'field_name': 'Div1LongestGTime',
                         'description': '',
-                        'exclude_feature_from_training': False,
+                        'exclude_feature_from_training': True,
                         'include_in_correlation': False,
                     },
                     {
                         'field_name': 'ActualElapsedTime',
                         'description': '',
-                        'exclude_feature_from_training': False,
+                        'exclude_feature_from_training': True,
                         'include_in_correlation': False,
                     }
                 ],
@@ -255,3 +255,9 @@ class GlobalsContextClass:
         dataset.loc[dataset[target_col_name].between(45, 60, 'right'), target_bucket_col_name] = '{45, 60}'
         dataset.loc[dataset[target_col_name].between(60, 10000, 'right'), target_bucket_col_name] = '{60, 10000}'
         return dataset
+
+    def feature_engineering(self, X):
+        X['Year'] = pd.to_datetime(X['Year'], format='%Y')
+        X['Month'] = pd.to_datetime(X['Month'], format='%m')
+        X['FlightDate'] = pd.to_datetime(X['FlightDate'], format='%Y-%m-%d')
+        return X
