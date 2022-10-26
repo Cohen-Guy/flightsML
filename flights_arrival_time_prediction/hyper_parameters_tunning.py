@@ -9,7 +9,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVC
 from sklearn.model_selection import KFold
 from sklearn.neighbors import KNeighborsClassifier
-
+from sklearn.naive_bayes import GaussianNB
 class HyperParametersTunning:
     def __init__(self, train_x, valid_x, train_y, valid_y):
         self.train_x = train_x
@@ -77,8 +77,8 @@ class HyperParametersTunning:
         params = {
             'n_estimators': trial.suggest_int("rf_n_estimators", 10, 1000),
             'max_depth': trial.suggest_int("rf_max_depth", 2, 32, log=True),
-            'min_samples_split': trial.suggest_int('min_samples_split', 1, 150),
-            'min_samples_leaf': trial.suggest_int('min_samples_leaf', 1, 60),
+            'min_samples_split': trial.suggest_int('min_samples_split', 2, 150),
+            'min_samples_leaf': trial.suggest_int('min_samples_leaf', 2, 60),
         }
 
         clf = RandomForestClassifier(random_state=42, **params)
@@ -143,14 +143,37 @@ class HyperParametersTunning:
             scores.append(accuracy)
         return np.mean(scores)
 
+    def objective_nb(self, trial):
+        var_smoothing = trial.suggest_float("var_smoothing", 1e-15, 1e-2, log=True)
+        clf = GaussianNB(var_smoothing=var_smoothing)
+        bst = clf.fit(self.train_cv_X, self.train_cv_y)
+        preds = bst.predict(self.valid_cv_X)
+        pred_labels = np.rint(preds)
+        accuracy = sklearn.metrics.accuracy_score(self.valid_cv_y, pred_labels)
+        return accuracy
+
+    def objective_cv_nb(self, trial):
+        fold = KFold(n_splits=5, shuffle=True, random_state=42)
+        scores = []
+        for fold_idx, (train_idx, valid_idx) in enumerate(fold.split(range(len(self.train_x)))):
+            self.train_cv_X = self.train_x.iloc[train_idx]
+            self.train_cv_y = self.train_y.iloc[train_idx].astype('int')
+            self.valid_cv_X = self.train_x.iloc[valid_idx]
+            self.valid_cv_y = self.train_y.iloc[valid_idx].astype('int')
+            accuracy = self.objective_nb(trial)
+            scores.append(accuracy)
+        return np.mean(scores)
+
     def optimize(self):
         study = optuna.create_study(direction="maximize")
         # print('RandomForestClassifier')
         # study.optimize(self.objective_cv_rf, n_trials=600, timeout=100000)
-        # print('SVC')
-        # study.optimize(self.objective_cv_svm, n_trials=600, timeout=100000)
-        print('KNeighborsClassifier')
-        study.optimize(self.objective_cv_knn, n_trials=600, timeout=100000)
+        print('SVC')
+        study.optimize(self.objective_cv_svm, n_trials=600, timeout=100000)
+        # print('KNeighborsClassifier')
+        # study.optimize(self.objective_cv_knn, n_trials=600, timeout=100000)
+        # print('GaussianNB')
+        # study.optimize(self.objective_cv_nb, n_trials=600, timeout=100000)
         print("Number of finished trials: ", len(study.trials))
         print("Best trial:")
         trial = study.best_trial
