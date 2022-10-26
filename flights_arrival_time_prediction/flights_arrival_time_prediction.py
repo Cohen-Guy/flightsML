@@ -117,7 +117,7 @@ class FlightsArrivalTimePrediction:
         'sample_type': 'uniform',
         'normalize_type': 'tree',
         'rate_drop': 3.2087168422238625e-05,
-        'skip_drop': 3.4557151831426346e-05
+        'skip_drop': 3.4557151831426346e-05,
         }
         model = XGBClassifier(params)
         model.fit(X_train, y_train)
@@ -257,6 +257,6 @@ class FlightsArrivalTimePrediction:
 
 if __name__ == "__main__":
     flights_arrival_time_prediction = FlightsArrivalTimePrediction()
-    flights_arrival_time_prediction.hyperparameters_optimization()
-    # model, X_test, y_test = flights_arrival_time_prediction.ml_flow()
+    # flights_arrival_time_prediction.hyperparameters_optimization()
+    model, X_test, y_test = flights_arrival_time_prediction.ml_flow()
     # fareMLPrediction.explainability(model, X_test, y_test)

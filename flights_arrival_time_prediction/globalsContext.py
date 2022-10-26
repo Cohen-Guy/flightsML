@@ -138,7 +138,7 @@ class GlobalsContextClass:
                     {
                         'field_name': 'CancellationCode',
                         'description': '',
-                        'exclude_feature_from_training': False,
+                        'exclude_feature_from_training': True,
                         'include_in_correlation': False,
                     },
                     {
@@ -244,7 +244,8 @@ class GlobalsContextClass:
 
     def transform_delay_bucket_to_ordinal(self, dataset):
         dataset['DelayBucketOrdinal'] = dataset['DelayBucket']
-        mapping = {'{-10000, -60}': -5, '{-60, -45}': -4, '{-45, -30}': -3, '{-30, -15}': -2, '{-15, -3}':-1, '{-3, 3}':0, '{3, 15}': 1, '{15, 30}':2, '{30, 45}':3, '{45, 60}':4, '{60, 10000}': 5}
+        mapping = {'{-10000, -60}': 0, '{-60, -45}': 1, '{-45, -30}': 2, '{-30, -15}': 3, '{-15, -3}': 4, '{-3, 3}': 5,
+                   '{3, 15}': 6, '{15, 30}': 7, '{30, 45}': 8, '{45, 60}':9, '{60, 10000}': 10}
         dataset = dataset.replace({'DelayBucketOrdinal': mapping})
         dataset['DelayBucketOrdinal'] = dataset['DelayBucketOrdinal'].astype('Int64')
         return dataset
