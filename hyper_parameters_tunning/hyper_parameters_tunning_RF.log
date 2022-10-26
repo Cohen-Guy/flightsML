@@ -1,0 +1,210 @@
+S:\repositories\Teaching\flightsML\venv\Scripts\python.exe S:\repositories\Teaching\flightsML\flights_arrival_time_prediction\flights_arrival_time_prediction.py
+Columns (77,84) have mixed types. Specify dtype option on import or set low_memory=False.
+Default parameter min_samples_leaf will change in version 2.6.See https://github.com/scikit-learn-contrib/category_encoders/issues/327
+Default parameter smoothing will change in version 2.6.See https://github.com/scikit-learn-contrib/category_encoders/issues/327
+[I 2022-10-23 21:32:53,381] A new study created in memory with name: no-name-a9e71dbc-f989-48c2-9a58-7fba22beb4ad
+RandomForestClassifier
+[I 2022-10-23 21:37:43,162] Trial 0 finished with value: 0.39187319798639786 and parameters: {'rf_n_estimators': 386, 'rf_max_depth': 10, 'min_samples_split': 59, 'min_samples_leaf': 9}. Best is trial 0 with value: 0.391873197986
+39786.
+[I 2022-10-23 21:40:32,668] Trial 1 finished with value: 0.37456682761864185 and parameters: {'rf_n_estimators': 729, 'rf_max_depth': 2, 'min_samples_split': 94, 'min_samples_leaf': 34}. Best is trial 0 with value: 0.391873197986
+39786.
+[I 2022-10-23 21:43:55,283] Trial 2 finished with value: 0.3955046323943535 and parameters: {'rf_n_estimators': 250, 'rf_max_depth': 11, 'min_samples_split': 24, 'min_samples_leaf': 5}. Best is trial 2 with value: 0.3955046323943
+535.
+[I 2022-10-23 21:56:21,507] Trial 3 finished with value: 0.4047838051481391 and parameters: {'rf_n_estimators': 861, 'rf_max_depth': 14, 'min_samples_split': 114, 'min_samples_leaf': 15}. Best is trial 3 with value: 0.40478380514
+81391.
+[I 2022-10-23 22:02:01,451] Trial 4 finished with value: 0.4003672971481933 and parameters: {'rf_n_estimators': 410, 'rf_max_depth': 13, 'min_samples_split': 74, 'min_samples_leaf': 57}. Best is trial 3 with value: 0.404783805148
+1391.
+[I 2022-10-23 22:03:32,338] Trial 5 finished with value: 0.37436968954892313 and parameters: {'rf_n_estimators': 357, 'rf_max_depth': 2, 'min_samples_split': 51, 'min_samples_leaf': 9}. Best is trial 3 with value: 0.4047838051481
+391.
+[I 2022-10-23 22:05:53,728] Trial 6 finished with value: 0.3947126339033546 and parameters: {'rf_n_estimators': 167, 'rf_max_depth': 11, 'min_samples_split': 79, 'min_samples_leaf': 1}. Best is trial 3 with value: 0.4047838051481
+391.
+[I 2022-10-23 22:07:50,824] Trial 7 finished with value: 0.390897900638002 and parameters: {'rf_n_estimators': 162, 'rf_max_depth': 10, 'min_samples_split': 20, 'min_samples_leaf': 50}. Best is trial 3 with value: 0.4047838051481
+391.
+[I 2022-10-23 22:09:25,711] Trial 8 finished with value: 0.3777382808325107 and parameters: {'rf_n_estimators': 284, 'rf_max_depth': 3, 'min_samples_split': 72, 'min_samples_leaf': 2}. Best is trial 3 with value: 0.40478380514813
+91.
+[I 2022-10-23 22:09:49,248] Trial 9 finished with value: 0.37999668070857406 and parameters: {'rf_n_estimators': 50, 'rf_max_depth': 5, 'min_samples_split': 50, 'min_samples_leaf': 52}. Best is trial 3 with value: 0.4047838051481
+391.
+[I 2022-10-23 22:26:13,657] Trial 10 finished with value: 0.411794199438955 and parameters: {'rf_n_estimators': 990, 'rf_max_depth': 25, 'min_samples_split': 146, 'min_samples_leaf': 23}. Best is trial 10 with value: 0.4117941994
+38955.
+[I 2022-10-23 22:42:41,041] Trial 11 finished with value: 0.4121296729356246 and parameters: {'rf_n_estimators': 995, 'rf_max_depth': 26, 'min_samples_split': 145, 'min_samples_leaf': 22}. Best is trial 11 with value: 0.412129672
+9356246.
+[I 2022-10-23 22:59:21,097] Trial 12 finished with value: 0.4114137634089322 and parameters: {'rf_n_estimators': 966, 'rf_max_depth': 30, 'min_samples_split': 150, 'min_samples_leaf': 28}. Best is trial 11 with value: 0.412129672
+9356246.
+[I 2022-10-23 23:09:36,235] Trial 13 finished with value: 0.4115175197337374 and parameters: {'rf_n_estimators': 635, 'rf_max_depth': 28, 'min_samples_split': 147, 'min_samples_leaf': 25}. Best is trial 11 with value: 0.412129672
+9356246.
+[I 2022-10-23 23:25:08,452] Trial 14 finished with value: 0.41107136979774905 and parameters: {'rf_n_estimators': 985, 'rf_max_depth': 20, 'min_samples_split': 128, 'min_samples_leaf': 38}. Best is trial 11 with value: 0.41212967
+29356246.
+[I 2022-10-23 23:37:52,154] Trial 15 finished with value: 0.4132191032221275 and parameters: {'rf_n_estimators': 800, 'rf_max_depth': 20, 'min_samples_split': 117, 'min_samples_leaf': 20}. Best is trial 15 with value: 0.413219103
+2221275.
+[I 2022-10-23 23:49:43,913] Trial 16 finished with value: 0.41217117633871697 and parameters: {'rf_n_estimators': 758, 'rf_max_depth': 18, 'min_samples_split': 117, 'min_samples_leaf': 18}. Best is trial 15 with value: 0.41321910
+32221275.
+[I 2022-10-23 23:54:30,351] Trial 17 finished with value: 0.38194036336468784 and parameters: {'rf_n_estimators': 600, 'rf_max_depth': 6, 'min_samples_split': 110, 'min_samples_leaf': 16}. Best is trial 15 with value: 0.413219103
+2221275.
+[I 2022-10-24 00:06:14,774] Trial 18 finished with value: 0.40902393625919353 and parameters: {'rf_n_estimators': 778, 'rf_max_depth': 17, 'min_samples_split': 117, 'min_samples_leaf': 42}. Best is trial 15 with value: 0.41321910
+32221275.
+[I 2022-10-24 00:11:36,139] Trial 19 finished with value: 0.38387020836344055 and parameters: {'rf_n_estimators': 562, 'rf_max_depth': 7, 'min_samples_split': 94, 'min_samples_leaf': 16}. Best is trial 15 with value: 0.4132191032
+221275.
+[I 2022-10-24 00:24:02,840] Trial 20 finished with value: 0.4103416293717953 and parameters: {'rf_n_estimators': 830, 'rf_max_depth': 18, 'min_samples_split': 131, 'min_samples_leaf': 32}. Best is trial 15 with value: 0.413219103
+2221275.
+[I 2022-10-24 00:35:24,169] Trial 21 finished with value: 0.41240981458199394 and parameters: {'rf_n_estimators': 702, 'rf_max_depth': 22, 'min_samples_split': 132, 'min_samples_leaf': 21}. Best is trial 15 with value: 0.41321910
+32221275.
+[I 2022-10-24 00:46:24,478] Trial 22 finished with value: 0.4138001353158124 and parameters: {'rf_n_estimators': 696, 'rf_max_depth': 20, 'min_samples_split': 100, 'min_samples_leaf': 20}. Best is trial 22 with value: 0.413800135
+3158124.
+[I 2022-10-24 00:54:39,501] Trial 23 finished with value: 0.4152008313471967 and parameters: {'rf_n_estimators': 493, 'rf_max_depth': 21, 'min_samples_split': 100, 'min_samples_leaf': 11}. Best is trial 23 with value: 0.415200831
+3471967.
+[I 2022-10-24 00:59:27,054] Trial 24 finished with value: 0.3860836557535906 and parameters: {'rf_n_estimators': 483, 'rf_max_depth': 8, 'min_samples_split': 98, 'min_samples_leaf': 11}. Best is trial 23 with value: 0.41520083134
+71967.
+[I 2022-10-24 01:07:35,532] Trial 25 finished with value: 0.41332286062344414 and parameters: {'rf_n_estimators': 505, 'rf_max_depth': 32, 'min_samples_split': 102, 'min_samples_leaf': 27}. Best is trial 23 with value: 0.41520083
+13471967.
+[I 2022-10-24 01:14:10,759] Trial 26 finished with value: 0.41415982128895923 and parameters: {'rf_n_estimators': 468, 'rf_max_depth': 30, 'min_samples_split': 87, 'min_samples_leaf': 29}. Best is trial 23 with value: 0.415200831
+3471967.
+[I 2022-10-24 01:22:38,180] Trial 27 finished with value: 0.4064853898326531 and parameters: {'rf_n_estimators': 670, 'rf_max_depth': 15, 'min_samples_split': 84, 'min_samples_leaf': 42}. Best is trial 23 with value: 0.4152008313
+471967.
+[I 2022-10-24 01:25:12,475] Trial 28 finished with value: 0.3788692111131533 and parameters: {'rf_n_estimators': 458, 'rf_max_depth': 4, 'min_samples_split': 4, 'min_samples_leaf': 13}. Best is trial 23 with value: 0.415200831347
+1967.
+[I 2022-10-24 01:33:52,462] Trial 29 finished with value: 0.41781200665088375 and parameters: {'rf_n_estimators': 570, 'rf_max_depth': 23, 'min_samples_split': 67, 'min_samples_leaf': 8}. Best is trial 29 with value: 0.4178120066
+5088375.
+[I 2022-10-24 01:39:22,678] Trial 30 finished with value: 0.4181647778920741 and parameters: {'rf_n_estimators': 368, 'rf_max_depth': 24, 'min_samples_split': 65, 'min_samples_leaf': 6}. Best is trial 30 with value: 0.41816477789
+20741.
+[I 2022-10-24 01:45:14,150] Trial 31 finished with value: 0.4186178447130418 and parameters: {'rf_n_estimators': 368, 'rf_max_depth': 24, 'min_samples_split': 61, 'min_samples_leaf': 5}. Best is trial 31 with value: 0.41861784471
+30418.
+[I 2022-10-24 01:50:54,147] Trial 32 finished with value: 0.4183619117155534 and parameters: {'rf_n_estimators': 367, 'rf_max_depth': 24, 'min_samples_split': 64, 'min_samples_leaf': 6}. Best is trial 31 with value: 0.41861784471
+30418.
+[I 2022-10-24 01:56:20,164] Trial 33 finished with value: 0.41860746774090263 and parameters: {'rf_n_estimators': 340, 'rf_max_depth': 25, 'min_samples_split': 62, 'min_samples_leaf': 6}. Best is trial 31 with value: 0.4186178447
+130418.
+[I 2022-10-24 02:00:27,316] Trial 34 finished with value: 0.4032447731515484 and parameters: {'rf_n_estimators': 322, 'rf_max_depth': 13, 'min_samples_split': 58, 'min_samples_leaf': 5}. Best is trial 31 with value: 0.41861784471
+30418.
+[I 2022-10-24 02:03:23,094] Trial 35 finished with value: 0.41137918753632097 and parameters: {'rf_n_estimators': 217, 'rf_max_depth': 15, 'min_samples_split': 33, 'min_samples_leaf': 5}. Best is trial 31 with value: 0.4186178447
+130418.
+[I 2022-10-24 02:09:56,291] Trial 36 finished with value: 0.4197003563203798 and parameters: {'rf_n_estimators': 410, 'rf_max_depth': 25, 'min_samples_split': 44, 'min_samples_leaf': 6}. Best is trial 36 with value: 0.41970035632
+03798.
+[I 2022-10-24 02:16:56,777] Trial 37 finished with value: 0.4207828671502372 and parameters: {'rf_n_estimators': 411, 'rf_max_depth': 32, 'min_samples_split': 40, 'min_samples_leaf': 3}. Best is trial 37 with value: 0.42078286715
+02372.
+[I 2022-10-24 02:19:35,507] Trial 38 finished with value: 0.391790194349941 and parameters: {'rf_n_estimators': 260, 'rf_max_depth': 10, 'min_samples_split': 44, 'min_samples_leaf': 2}. Best is trial 37 with value: 0.420782867150
+2372.
+[I 2022-10-24 02:27:09,940] Trial 39 finished with value: 0.4212151802063451 and parameters: {'rf_n_estimators': 436, 'rf_max_depth': 28, 'min_samples_split': 34, 'min_samples_leaf': 1}. Best is trial 39 with value: 0.42121518020
+63451.
+[I 2022-10-24 02:34:12,018] Trial 40 finished with value: 0.42072753242924 and parameters: {'rf_n_estimators': 417, 'rf_max_depth': 32, 'min_samples_split': 37, 'min_samples_leaf': 1}. Best is trial 39 with value: 0.4212151802063
+451.
+[I 2022-10-24 02:41:14,637] Trial 41 finished with value: 0.4216440346704477 and parameters: {'rf_n_estimators': 413, 'rf_max_depth': 31, 'min_samples_split': 35, 'min_samples_leaf': 1}. Best is trial 41 with value: 0.42164403467
+04477.
+[I 2022-10-24 02:48:41,911] Trial 42 finished with value: 0.4214503610537407 and parameters: {'rf_n_estimators': 427, 'rf_max_depth': 32, 'min_samples_split': 31, 'min_samples_leaf': 1}. Best is trial 41 with value: 0.42164403467
+04477.
+[I 2022-10-24 02:56:30,837] Trial 43 finished with value: 0.4208278296237844 and parameters: {'rf_n_estimators': 434, 'rf_max_depth': 32, 'min_samples_split': 23, 'min_samples_leaf': 1}. Best is trial 41 with value: 0.42164403467
+04477.
+[I 2022-10-24 03:02:10,529] Trial 44 finished with value: 0.4188668577754351 and parameters: {'rf_n_estimators': 295, 'rf_max_depth': 32, 'min_samples_split': 16, 'min_samples_leaf': 1}. Best is trial 41 with value: 0.42164403467
+04477.
+[I 2022-10-24 03:10:56,576] Trial 45 finished with value: 0.4199078682523158 and parameters: {'rf_n_estimators': 534, 'rf_max_depth': 27, 'min_samples_split': 28, 'min_samples_leaf': 9}. Best is trial 41 with value: 0.42164403467
+04477.
+[I 2022-10-24 03:19:09,975] Trial 46 finished with value: 0.4166949141472145 and parameters: {'rf_n_estimators': 425, 'rf_max_depth': 28, 'min_samples_split': 10, 'min_samples_leaf': 3}. Best is trial 41 with value: 0.42164403467
+04477.
+[I 2022-10-24 03:26:16,753] Trial 47 finished with value: 0.4203228897837466 and parameters: {'rf_n_estimators': 426, 'rf_max_depth': 28, 'min_samples_split': 25, 'min_samples_leaf': 9}. Best is trial 41 with value: 0.42164403467
+04477.
+[I 2022-10-24 03:31:28,366] Trial 48 finished with value: 0.41949629939207733 and parameters: {'rf_n_estimators': 308, 'rf_max_depth': 32, 'min_samples_split': 17, 'min_samples_leaf': 11}. Best is trial 41 with value: 0.421644034
+6704477.
+[I 2022-10-24 03:32:34,433] Trial 49 finished with value: 0.37745814032245895 and parameters: {'rf_n_estimators': 243, 'rf_max_depth': 3, 'min_samples_split': 35, 'min_samples_leaf': 3}. Best is trial 41 with value: 0.42164403467
+04477.
+[I 2022-10-24 03:39:56,018] Trial 50 finished with value: 0.41249628249204395 and parameters: {'rf_n_estimators': 533, 'rf_max_depth': 16, 'min_samples_split': 53, 'min_samples_leaf': 14}. Best is trial 41 with value: 0.421644034
+6704477.
+[I 2022-10-24 03:47:35,927] Trial 51 finished with value: 0.42158524135744535 and parameters: {'rf_n_estimators': 442, 'rf_max_depth': 32, 'min_samples_split': 36, 'min_samples_leaf': 1}. Best is trial 41 with value: 0.4216440346
+704477.
+[I 2022-10-24 03:55:02,045] Trial 52 finished with value: 0.42073099126047 and parameters: {'rf_n_estimators': 451, 'rf_max_depth': 28, 'min_samples_split': 43, 'min_samples_leaf': 1}. Best is trial 41 with value: 0.4216440346704
+477.
+[I 2022-10-24 03:58:03,338] Trial 53 finished with value: 0.4193614249493794 and parameters: {'rf_n_estimators': 179, 'rf_max_depth': 21, 'min_samples_split': 30, 'min_samples_leaf': 3}. Best is trial 41 with value: 0.42164403467
+04477.
+[I 2022-10-24 04:06:07,220] Trial 54 finished with value: 0.40901010081466166 and parameters: {'rf_n_estimators': 604, 'rf_max_depth': 19, 'min_samples_split': 21, 'min_samples_leaf': 59}. Best is trial 41 with value: 0.421644034
+6704477.
+[I 2022-10-24 04:06:21,841] Trial 55 finished with value: 0.41322257048603034 and parameters: {'rf_n_estimators': 15, 'rf_max_depth': 28, 'min_samples_split': 39, 'min_samples_leaf': 8}. Best is trial 41 with value: 0.42164403467
+04477.
+[I 2022-10-24 04:15:50,058] Trial 56 finished with value: 0.41896023975957347 and parameters: {'rf_n_estimators': 516, 'rf_max_depth': 22, 'min_samples_split': 11, 'min_samples_leaf': 4}. Best is trial 41 with value: 0.4216440346
+704477.
+[I 2022-10-24 04:17:21,900] Trial 57 finished with value: 0.3748711759402882 and parameters: {'rf_n_estimators': 399, 'rf_max_depth': 2, 'min_samples_split': 50, 'min_samples_leaf': 1}. Best is trial 41 with value: 0.421644034670
+4477.
+[I 2022-10-24 04:24:52,948] Trial 58 finished with value: 0.42054077169049753 and parameters: {'rf_n_estimators': 449, 'rf_max_depth': 26, 'min_samples_split': 24, 'min_samples_leaf': 8}. Best is trial 41 with value: 0.4216440346
+704477.
+[W 2022-10-24 04:24:53,135] Trial 59 failed because of the following error: ValueError('min_samples_split == 1, must be >= 2.')
+Traceback (most recent call last):
+  File "S:\repositories\Teaching\flightsML\venv\lib\site-packages\optuna\study\_optimize.py", line 196, in _run_trial
+    value_or_values = func(trial)
+  File "S:\repositories\Teaching\flightsML\flights_arrival_time_prediction\hyper_parameters_tunning.py", line 99, in objective_cv_rf
+    accuracy = self.objective_rf(trial)
+  File "S:\repositories\Teaching\flightsML\flights_arrival_time_prediction\hyper_parameters_tunning.py", line 85, in objective_rf
+    bst = clf.fit(self.train_cv_X, self.train_cv_y)
+  File "S:\repositories\Teaching\flightsML\venv\lib\site-packages\sklearn\ensemble\_forest.py", line 476, in fit
+    trees = Parallel(
+  File "S:\repositories\Teaching\flightsML\venv\lib\site-packages\joblib\parallel.py", line 1085, in __call__
+    if self.dispatch_one_batch(iterator):
+  File "S:\repositories\Teaching\flightsML\venv\lib\site-packages\joblib\parallel.py", line 901, in dispatch_one_batch
+    self._dispatch(tasks)
+  File "S:\repositories\Teaching\flightsML\venv\lib\site-packages\joblib\parallel.py", line 819, in _dispatch
+    job = self._backend.apply_async(batch, callback=cb)
+  File "S:\repositories\Teaching\flightsML\venv\lib\site-packages\joblib\_parallel_backends.py", line 208, in apply_async
+    result = ImmediateResult(func)
+  File "S:\repositories\Teaching\flightsML\venv\lib\site-packages\joblib\_parallel_backends.py", line 597, in __init__
+    self.results = batch()
+  File "S:\repositories\Teaching\flightsML\venv\lib\site-packages\joblib\parallel.py", line 288, in __call__
+    return [func(*args, **kwargs)
+  File "S:\repositories\Teaching\flightsML\venv\lib\site-packages\joblib\parallel.py", line 288, in <listcomp>
+    return [func(*args, **kwargs)
+  File "S:\repositories\Teaching\flightsML\venv\lib\site-packages\sklearn\utils\fixes.py", line 117, in __call__
+    return self.function(*args, **kwargs)
+  File "S:\repositories\Teaching\flightsML\venv\lib\site-packages\sklearn\ensemble\_forest.py", line 189, in _parallel_build_trees
+    tree.fit(X, y, sample_weight=curr_sample_weight, check_input=False)
+  File "S:\repositories\Teaching\flightsML\venv\lib\site-packages\sklearn\tree\_classes.py", line 969, in fit
+    super().fit(
+  File "S:\repositories\Teaching\flightsML\venv\lib\site-packages\sklearn\tree\_classes.py", line 265, in fit
+    check_scalar(
+  File "S:\repositories\Teaching\flightsML\venv\lib\site-packages\sklearn\utils\validation.py", line 1480, in check_scalar
+    raise ValueError(
+ValueError: min_samples_split == 1, must be >= 2.
+Traceback (most recent call last):
+  File "S:\repositories\Teaching\flightsML\flights_arrival_time_prediction\flights_arrival_time_prediction.py", line 260, in <module>
+    flights_arrival_time_prediction.hyperparameters_optimization()
+  File "S:\repositories\Teaching\flightsML\flights_arrival_time_prediction\flights_arrival_time_prediction.py", line 212, in hyperparameters_optimization
+    self.hyperParametersTunning.optimize()
+  File "S:\repositories\Teaching\flightsML\flights_arrival_time_prediction\hyper_parameters_tunning.py", line 149, in optimize
+    # study.optimize(self.objective_cv_rf, n_trials=600, timeout=100000)
+  File "S:\repositories\Teaching\flightsML\venv\lib\site-packages\optuna\study\study.py", line 419, in optimize
+    _optimize(
+  File "S:\repositories\Teaching\flightsML\venv\lib\site-packages\optuna\study\_optimize.py", line 66, in _optimize
+    _optimize_sequential(
+  File "S:\repositories\Teaching\flightsML\venv\lib\site-packages\optuna\study\_optimize.py", line 160, in _optimize_sequential
+    frozen_trial = _run_trial(study, func, catch)
+  File "S:\repositories\Teaching\flightsML\venv\lib\site-packages\optuna\study\_optimize.py", line 234, in _run_trial
+    raise func_err
+  File "S:\repositories\Teaching\flightsML\venv\lib\site-packages\optuna\study\_optimize.py", line 196, in _run_trial
+    value_or_values = func(trial)
+  File "S:\repositories\Teaching\flightsML\flights_arrival_time_prediction\hyper_parameters_tunning.py", line 99, in objective_cv_rf
+    accuracy = self.objective_rf(trial)
+  File "S:\repositories\Teaching\flightsML\flights_arrival_time_prediction\hyper_parameters_tunning.py", line 85, in objective_rf
+    bst = clf.fit(self.train_cv_X, self.train_cv_y)
+  File "S:\repositories\Teaching\flightsML\venv\lib\site-packages\sklearn\ensemble\_forest.py", line 476, in fit
+    trees = Parallel(
+  File "S:\repositories\Teaching\flightsML\venv\lib\site-packages\joblib\parallel.py", line 1085, in __call__
+    if self.dispatch_one_batch(iterator):
+  File "S:\repositories\Teaching\flightsML\venv\lib\site-packages\joblib\parallel.py", line 901, in dispatch_one_batch
+    self._dispatch(tasks)
+  File "S:\repositories\Teaching\flightsML\venv\lib\site-packages\joblib\parallel.py", line 819, in _dispatch
+    job = self._backend.apply_async(batch, callback=cb)
+  File "S:\repositories\Teaching\flightsML\venv\lib\site-packages\joblib\_parallel_backends.py", line 208, in apply_async
+    result = ImmediateResult(func)
+  File "S:\repositories\Teaching\flightsML\venv\lib\site-packages\joblib\_parallel_backends.py", line 597, in __init__
+    self.results = batch()
+  File "S:\repositories\Teaching\flightsML\venv\lib\site-packages\joblib\parallel.py", line 288, in __call__
+    return [func(*args, **kwargs)
+  File "S:\repositories\Teaching\flightsML\venv\lib\site-packages\joblib\parallel.py", line 288, in <listcomp>
+    return [func(*args, **kwargs)
+  File "S:\repositories\Teaching\flightsML\venv\lib\site-packages\sklearn\utils\fixes.py", line 117, in __call__
+    return self.function(*args, **kwargs)
+  File "S:\repositories\Teaching\flightsML\venv\lib\site-packages\sklearn\ensemble\_forest.py", line 189, in _parallel_build_trees
+    tree.fit(X, y, sample_weight=curr_sample_weight, check_input=False)
+  File "S:\repositories\Teaching\flightsML\venv\lib\site-packages\sklearn\tree\_classes.py", line 969, in fit
+    super().fit(
+  File "S:\repositories\Teaching\flightsML\venv\lib\site-packages\sklearn\tree\_classes.py", line 265, in fit
+    check_scalar(
+  File "S:\repositories\Teaching\flightsML\venv\lib\site-packages\sklearn\utils\validation.py", line 1480, in check_scalar
+    raise ValueError(
+ValueError: min_samples_split == 1, must be >= 2.
+
+Process finished with exit code 1
+

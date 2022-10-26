@@ -1,0 +1,12 @@
+Teaching\flightsML\venv\Scripts\python.exe S:\repositories\Teaching\flightsML\flights_arrival_time_prediction\flights_arrival_time_prediction.py
+Columns (77,84) have mixed types. Specify dtype option on import or set low_memory=False.
+Default parameter min_samples_leaf will change in version 2.6.See https://github.com/scikit-learn-contrib/category_encoders/issues/327
+Default parameter smoothing will change in version 2.6.See https://github.com/scikit-learn-contrib/category_encoders/issues/327
+[I 2022-10-23 21:33:00,977] A new study created in memory with name: no-name-cb3279d8-8d2b-47a2-abaf-99c6a8de97d8
+SVC
+[I 2022-10-24 07:06:40,113] Trial 0 finished with value: 0.3259021612250431 and parameters: {'svc_c': 5.84576096894445e-09}. Best is trial 0 with value: 0.3259021612250431.
+
+
+
+
+
