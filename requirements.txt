@@ -12,3 +12,5 @@ category_encoders
 xgboost
 optuna
 sweetviz
+mlens
+pydotplus

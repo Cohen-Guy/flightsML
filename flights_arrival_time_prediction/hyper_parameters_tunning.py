@@ -10,6 +10,7 @@ from sklearn.svm import SVC
 from sklearn.model_selection import KFold
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.naive_bayes import GaussianNB
+from sklearn.tree import DecisionTreeClassifier
 class HyperParametersTunning:
     def __init__(self, train_x, valid_x, train_y, valid_y):
         self.train_x = train_x
@@ -123,7 +124,7 @@ class HyperParametersTunning:
 
     def objective_knn(self, trial):
         optimizer = trial.suggest_categorical('algorithm', ['auto', 'ball_tree', 'kd_tree', 'brute'])
-        rf_max_depth = trial.suggest_int("k_n_neighbors", 2, 10, log=True)
+        rf_max_depth = trial.suggest_int("n_neighbors", 2, 10, log=True)
         clf = KNeighborsClassifier(n_neighbors=rf_max_depth, algorithm=optimizer)
         bst = clf.fit(self.train_cv_X, self.train_cv_y)
         preds = bst.predict(self.valid_cv_X)
@@ -164,16 +165,45 @@ class HyperParametersTunning:
             scores.append(accuracy)
         return np.mean(scores)
 
+    def objective_dt(self, trial):
+        params = {
+            'max_depth': trial.suggest_int('max_depth', 2, 20),
+            'min_samples_leaf': trial.suggest_int('min_samples_leaf', 5, 100),
+            'criterion': trial.suggest_categorical('criterion', ["gini", "entropy"])
+        }
+        clf = DecisionTreeClassifier(random_state=42, **params)
+        bst = clf.fit(self.train_cv_X, self.train_cv_y)
+        preds = bst.predict(self.valid_cv_X)
+        pred_labels = np.rint(preds)
+        accuracy = sklearn.metrics.accuracy_score(self.valid_cv_y, pred_labels)
+        return accuracy
+
+    def objective_cv_dt(self, trial):
+        fold = KFold(n_splits=5, shuffle=True, random_state=42)
+        scores = []
+        for train_idx, valid_idx in fold.split(range(len(self.train_x))):
+            self.train_cv_X = self.train_x.iloc[train_idx]
+            self.train_cv_y = self.train_y[train_idx]
+            self.valid_cv_X = self.train_x.iloc[valid_idx]
+            self.valid_cv_y = self.train_y[valid_idx]
+            accuracy = self.objective_dt(trial)
+            scores.append(accuracy)
+        return np.mean(scores)
+
     def optimize(self):
         study = optuna.create_study(direction="maximize")
+        # print('XGBoostClassifier')
+        # study.optimize(self.objective_cv_xgb, n_trials=600, timeout=100000)
         # print('RandomForestClassifier')
         # study.optimize(self.objective_cv_rf, n_trials=600, timeout=100000)
-        print('SVC')
-        study.optimize(self.objective_cv_svm, n_trials=600, timeout=100000)
+        # print('SVC')
+        # study.optimize(self.objective_cv_svm, n_trials=600, timeout=100000)
         # print('KNeighborsClassifier')
         # study.optimize(self.objective_cv_knn, n_trials=600, timeout=100000)
         # print('GaussianNB')
         # study.optimize(self.objective_cv_nb, n_trials=600, timeout=100000)
+        print('DecisionTreeClassifier')
+        study.optimize(self.objective_cv_dt, n_trials=600, timeout=100000)
         print("Number of finished trials: ", len(study.trials))
         print("Best trial:")
         trial = study.best_trial

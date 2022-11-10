@@ -12,6 +12,7 @@ from sklearn.tree import DecisionTreeRegressor
 # from xgboost import XGBRegressor
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
+from sklearn.tree import DecisionTreeClassifier
 from xgboost import XGBClassifier
 import shap
 import matplotlib.pyplot as plt
@@ -24,7 +25,11 @@ from sklearn.preprocessing import StandardScaler
 from hyper_parameters_tunning import HyperParametersTunning
 import plotly.figure_factory as ff
 from sklearn.metrics import confusion_matrix
-
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.naive_bayes import GaussianNB
+from mlens.ensemble import SuperLearner
+from sklearn import tree
+import pydotplus
 class FlightsArrivalTimePrediction:
 
     def __init__(self):
@@ -66,9 +71,11 @@ class FlightsArrivalTimePrediction:
         return X
 
     def encoding(self, X, y):
+        label_encoder = LabelEncoder()
+        y = label_encoder.fit_transform(y)
         target_encoder = TargetEncoder()
         X[self.categorical_cols] = target_encoder.fit_transform(X[self.categorical_cols], y)
-        return X, y
+        return X.astype(float), y
 
     def scaling(self, X):
         scaler = StandardScaler()
@@ -123,6 +130,33 @@ class FlightsArrivalTimePrediction:
         model.fit(X_train, y_train)
         return model
 
+    df_class_names = ['NO', 'YES']
+
+    def get_graph(self, clf, df_feature_names):
+        df_class_names = ['{-10000, -60}', '{-60, -45}', '{-45, -30}', '{-30, -15}', '{-15, -3}', '{-3, 3}', '{3, 15}', '{15, 30}', '{30, 45}', '{45, 60}', '{60, 10000}']
+        dot_data = tree.export_graphviz(clf, out_file=None,
+                                        feature_names=df_feature_names,
+                                        class_names=df_class_names,
+                                        filled=True,
+                                        rounded=True)
+        return pydotplus.graph_from_dot_data(dot_data)
+    def save_graph(self, graph):
+        graph_file_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'visualisations', 'decision_tree', 'decision_tree_diagram.svg')
+        graph.write_svg(graph_file_path)
+
+    def train_decision_tree_classifier(self, X_train, y_train):
+        params = {
+            'max_depth': 4,
+            'min_samples_leaf': 94,
+            'criterion': 'entropy'
+        }
+        model = DecisionTreeClassifier(**params)
+        model.fit(X_train, y_train)
+        graph = self.get_graph(model, X_train.columns)
+        self.save_graph(graph)
+        return model
+
+
     def train_logistic_regression(self, X_train, y_train):
         model = LogisticRegression()
         model.fit(X_train, y_train)
@@ -176,9 +210,88 @@ class FlightsArrivalTimePrediction:
         plt.clf()
 
     def train_random_forest_classifier(self, X_train, y_train):
-        model = RandomForestClassifier()
+        params = {
+            'n_estimators': 937,
+            'max_depth': 25,
+            'min_samples_split': 32,
+            'min_samples_leaf': 2
+        }
+        model = RandomForestClassifier(**params)
         model.fit(X_train, y_train)
         return model
+
+    def train_naive_bayes_classifier(self, X_train, y_train):
+        params = {
+            'var_smoothing': 1.8169138362995293e-07
+        }
+        model = GaussianNB(**params)
+        model.fit(X_train, y_train)
+        return model
+
+    def train_knn_classifier(self, X_train, y_train):
+        params = {
+            'algorithm': 'ball_tree',
+            'n_neighbors': 10
+        }
+        model = KNeighborsClassifier(**params)
+        model.fit(X_train, y_train)
+        return model
+
+    def train_super_learner(self, X_train, y_train):
+        ensemble = SuperLearner(scorer=accuracy_score, verbose=2)
+
+        params = {
+            'booster': 'dart',
+            'lambda': 0.5642581562857996,
+            'alpha': 0.011964958656080679,
+            'subsample': 0.9664606774005825,
+            'colsample_bytree': 0.973523784845717,
+            'max_depth': 9,
+            'min_child_weight': 3,
+            'eta': 0.9741117119835012,
+            'gamma': 0.00015275824324089936,
+            'grow_policy': 'depthwise',
+            'sample_type': 'uniform',
+            'normalize_type': 'tree',
+            'rate_drop': 3.2087168422238625e-05,
+            'skip_drop': 3.4557151831426346e-05,
+        }
+        xgb_model = XGBClassifier(params)
+
+        params = {
+            'var_smoothing': 1.8169138362995293e-07
+        }
+        nb_model = GaussianNB(**params)
+
+        params = {
+            'algorithm': 'ball_tree',
+            'n_neighbors': 10
+        }
+        knn_model = KNeighborsClassifier(**params)
+
+        params = {
+            'max_depth': 16,
+            'min_samples_leaf': 94,
+            'criterion': 'entropy'
+        }
+        dt_model = DecisionTreeClassifier(**params)
+
+        params = {
+            'n_estimators': 937,
+            'max_depth': 25,
+            'min_samples_split': 32,
+            'min_samples_leaf': 2
+        }
+        rf_model = RandomForestClassifier(**params)
+        # rf_model = RandomForestClassifier()
+        ensemble.add([xgb_model,
+                      nb_model,
+                      knn_model,
+                     dt_model])
+
+        ensemble.add_meta(rf_model)
+        ensemble.fit(X_train, y_train)
+        return ensemble
 
     def evaluate_train(self, model, X, y):
         y_pred = model.predict(X)
@@ -197,7 +310,7 @@ class FlightsArrivalTimePrediction:
 
     def ml_flow(self):
         X_train, X_test, y_train, y_test = self.preprocessing(self.dataset)
-        model = self.train_xgboost_classifier(X_train, y_train)
+        model = self.train_decision_tree_classifier(X_train, y_train)
         X_train, train_accuracy = self.evaluate_train(model, X_train, y_train)
         print(f"train_accuracy: {train_accuracy}")
         self.confusion_matrix_plot(X_train['y_true'], X_train['y_pred'])

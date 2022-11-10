@@ -124,6 +124,12 @@ class GlobalsContextClass:
                         'include_in_correlation': True,
                     },
                     {
+                        'field_name': 'Tail_Number',
+                        'description': '',
+                        'exclude_feature_from_training': False,
+                        'include_in_correlation': True,
+                    },
+                    {
                         'field_name': 'OriginAirportID',
                         'description': '',
                         'exclude_feature_from_training': False,
@@ -244,8 +250,17 @@ class GlobalsContextClass:
 
     def transform_delay_bucket_to_ordinal(self, dataset):
         dataset['DelayBucketOrdinal'] = dataset['DelayBucket']
-        mapping = {'{-10000, -60}': 0, '{-60, -45}': 1, '{-45, -30}': 2, '{-30, -15}': 3, '{-15, -3}': 4, '{-3, 3}': 5,
-                   '{3, 15}': 6, '{15, 30}': 7, '{30, 45}': 8, '{45, 60}':9, '{60, 10000}': 10}
+        mapping = {'{-10000, -60}': 0,
+                   '{-60, -45}': 1,
+                   '{-45, -30}': 2,
+                   '{-30, -15}': 3,
+                   '{-15, -3}': 4,
+                   '{-3, 3}': 5,
+                   '{3, 15}': 6,
+                   '{15, 30}': 7,
+                   '{30, 45}': 8,
+                   '{45, 60}': 9,
+                   '{60, 10000}': 10}
         dataset = dataset.replace({'DelayBucketOrdinal': mapping})
         dataset['DelayBucketOrdinal'] = dataset['DelayBucketOrdinal'].astype('Int64')
         return dataset
